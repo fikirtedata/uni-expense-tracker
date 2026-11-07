@@ -6,8 +6,16 @@
     <style>
         body { font-family: sans-serif; margin: 40px; background: #f4f6f9; color: #333; }
         .container { max-width: 800px; margin: auto; background: white; padding: 30px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
-        h1 { color: #2c3e50; }
+        h1, h2 { color: #2c3e50; }
         .card { background: #e8f4fd; padding: 15px; border-radius: 6px; margin-bottom: 20px; }
+        .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 25px; }
+        .form-card { background: #f8f9fa; padding: 20px; border-radius: 6px; border: 1px solid #e9ecef; }
+        form p { margin-bottom: 12px; }
+        input, select { width: 100%; padding: 8px; box-sizing: border-box; margin-top: 4px; border: 1px solid #ccc; border-radius: 4px; }
+        .btn-expense { background: #2ecc71; color: white; border: none; padding: 10px 15px; width: 100%; border-radius: 4px; cursor: pointer; font-weight: bold; }
+        .btn-expense:hover { background: #27ae60; }
+        .btn-category { background: #3498db; color: white; border: none; padding: 10px 15px; width: 100%; border-radius: 4px; cursor: pointer; font-weight: bold; }
+        .btn-category:hover { background: #2980b9; }
         table { width: 100%; border-collapse: collapse; margin-top: 15px; }
         th, td { padding: 12px; text-align: left; border-bottom: 1px solid #ddd; }
         th { background-color: #f8f9fa; }
@@ -19,6 +27,29 @@
         
         <div class="card">
             <h3>Total Spent: ${{ total_spent }}</h3>
+        </div>
+
+        <!-- Side-by-Side Forms for Categories and Expenses -->
+        <div class="grid">
+            <!-- Add Category Form -->
+            <div class="form-card">
+                <h2>Add Category</h2>
+                <form method="post">
+                    {% csrf_token %}
+                    {{ category_form.as_p }}
+                    <button type="submit" name="add_category" class="btn-category">Add Category</button>
+                </form>
+            </div>
+
+            <!-- Add Expense Form -->
+            <div class="form-card">
+                <h2>Add Expense</h2>
+                <form method="post">
+                    {% csrf_token %}
+                    {{ form.as_p }}
+                    <button type="submit" name="add_expense" class="btn-expense">Add Expense</button>
+                </form>
+            </div>
         </div>
 
         <h2>Your Expenses</h2>
@@ -41,7 +72,7 @@
                 </tr>
                 {% empty %}
                 <tr>
-                    <td colspan="4">No expenses recorded yet. Add some via the admin panel!</td>
+                    <td colspan="4">No expenses recorded yet. Add a category and an expense above!</td>
                 </tr>
                 {% endfor %}
             </tbody>
