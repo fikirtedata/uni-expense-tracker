@@ -1,4 +1,4 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.db.models import Sum
 from .models import Expense, Category, Budget
@@ -60,7 +60,8 @@ def dashboard(request):
             percentage = 0
             capped_percentage = 0
 
-        budget_progress.html = True
+        # REMOVED: budget_progress.html = True (This caused the crash!)
+
         budget_progress.append({
             'category': cat.name,
             'spent': spent,
@@ -69,7 +70,6 @@ def dashboard(request):
             'capped_percentage': capped_percentage,
             'is_over': spent > limit if limit > 0 else False
         })
-
     context = {
         'expenses': expenses,
         'categories': categories,
@@ -80,3 +80,10 @@ def dashboard(request):
         'budget_progress': budget_progress,
     }
     return render(request, 'tracker/dashboard.html', context)
+def delete_expense(request, pk):
+    # Ensure the user can only delete their own expenses
+    expense = get_object_or_404(Expense, pk=pk, user=request.user)
+    if request.method == 'POST':
+        expense.delete()
+        return redirect('dashboard')
+    return redirect('dashboard')
